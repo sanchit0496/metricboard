@@ -1,0 +1,25 @@
+{
+  "name": "metricboard",
+  "version": "1.0.0",
+  "description": "MetricBoard is a performance monitoring tool that logs and visualizes microservice metrics with detailed charts for response times, status codes, and API performance",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanchit0496/metricboard.git"
+  },
+  "keywords": [
+    "performance"
+  ],
+  "author": "Sanchit",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/sanchit0496/metricboard/issues"
+  },
+  "homepage": "https://github.com/sanchit0496/metricboard#readme",
+  "dependencies": {
+    "ejs": "^3.1.10"
+  }
+}
