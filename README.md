@@ -140,6 +140,7 @@ An HTML report is automatically generated for each microservice. This report inc
 2. **Status Code Distribution (Pie Chart)**:
    A breakdown of response status codes (e.g., 200, 401, 404, 500, etc) in a pie chart format.
 
+
 3. **Response Time Metrics**:
    Key response time metrics such as:
    - Slowest response
@@ -147,11 +148,18 @@ An HTML report is automatically generated for each microservice. This report inc
    - Median response time
    - Average payload size
 
+        ![Overall](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/overall.png) 
+
 4. **Requests Over Time (Line Chart)**:
    A line chart showing the number of requests made at each hour of the day.
 
+   ![Timeline](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/timeline.png)
+
+
 5. **Paginated Logs**:
    A paginated table displaying individual API call logs with filters for HTTP method and status code.
+
+   ![Logs](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/logs.png)
 
 ---
 
@@ -188,4 +196,6 @@ MetricBoard is licensed under the Apache-2.0 License.
 
 ### Contributions
 
-We welcome contributions from the open-source community. Please submit issues or pull requests on the official [GitHub repository](https://github.com/your-repository/metricboard).
+We welcome contributions from the open-source community. Please submit issues or pull requests on the official [GitHub repository](https://github.com/sanchit0496/metricboard).
+
+Connect [Here](https://www.linkedin.com/in/sanchit0496/).
