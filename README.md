@@ -1,5 +1,5 @@
 
-# MetricBoard: API Metrics Logging and Visualization Middleware
+# MetricBoard: API Metrics Logging and Chart Visualization Middleware
 
 ## Overview
 
