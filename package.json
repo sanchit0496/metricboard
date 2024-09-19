@@ -1,6 +1,6 @@
 {
   "name": "metricboard",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "MetricBoard is a performance monitoring tool that logs and visualizes microservice metrics with detailed charts for response times, status codes, and API performance",
   "main": "index.js",
   "scripts": {
