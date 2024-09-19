@@ -5,6 +5,13 @@
 
 **MetricBoard** is a middleware designed for Express.js applications to automatically log, analyze, and generate visual reports of HTTP request and response metrics. It provides detailed logging of critical performance indicators, such as response times, payload sizes, and status codes for every API call, saving them into JSON files and producing an HTML-based visual report with charts. MetricBoard is particularly useful for developers looking to monitor, analyze, and improve their microservices' performance through structured data and easily interpretable visualizations.
 
+   ![Overall](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/overall.png)  
+
+![Timeline](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/timeline.png)
+
+
+![Logs](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/logs.png)
+
 ---
 
 ## Key Features
@@ -46,12 +53,20 @@ npm install metricboard
 To use MetricBoard in your Express application, follow these steps:
 
 1. **Require the Middleware**:
+
+You can now attach the metricboard middleware to your Express app. When setting up the middleware, you need to specify two parameters:
+
+a) baseUrl: The base URL for the routes you want the middleware to monitor. 
+
+b) microservices: An array of microservice names or resource paths you want to log metrics for
+
    ```js
    const express = require('express');
    const { metricboard } = require('metricboard');
    const app = express();
 
-   app.use(metricboard);  // Attach MetricBoard middleware
+   // Middleware for /app with microservices 'appuse' and 'contracts'
+   app.use(metricboard('/app', ['appuse', 'contracts']));
 
    // Your application routes
    app.get('/', (req, res) => res.send('Hello World!'));
@@ -148,18 +163,12 @@ An HTML report is automatically generated for each microservice. This report inc
    - Median response time
    - Average payload size
 
-        ![Overall](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/overall.png) 
-
 4. **Requests Over Time (Line Chart)**:
    A line chart showing the number of requests made at each hour of the day.
-
-   ![Timeline](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/timeline.png)
 
 
 5. **Paginated Logs**:
    A paginated table displaying individual API call logs with filters for HTTP method and status code.
-
-   ![Logs](https://raw.githubusercontent.com/sanchit0496/metricboard/6e1b8c3a33a19e58f911cb7cb0c882bf3cfc1a91/assets/logs.png)
 
 ---
 

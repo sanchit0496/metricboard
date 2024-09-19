@@ -6,29 +6,50 @@ const ejs = require("ejs");
 const metricDir = path.join(process.cwd(), "metrics");
 
 // Middleware to log metrics and generate reports per microservice
-function metricboard(req, res, next) {
-  const start = Date.now();
-  let logged = false;
+function metricboard(baseUrl, microservices) {
+  return function (req, res, next) {
+    const start = Date.now();
+    let logged = false;
 
-  function logOnce() {
-    if (!logged) {
-      logResponse(req, res, start);
-      logged = true;
+    // Extract the matching microservice from the request
+    const matchedMicroservice = matchMicroservice(req.originalUrl, baseUrl, microservices);
+
+    // Proceed if a microservice matches the request
+    if (matchedMicroservice) {
+      function logOnce() {
+        if (!logged) {
+          logResponse(req, res, start, matchedMicroservice);
+          logged = true;
+        }
+      }
+
+      res.on("finish", logOnce);
+      res.on("close", logOnce);
+    }
+
+    next();
+  };
+}
+
+// Function to match the microservice from the request URL
+function matchMicroservice(originalUrl, baseUrl, microservices) {
+  // Remove baseUrl from the URL to isolate the microservice part
+  const strippedUrl = originalUrl.replace(baseUrl, '').split("/").filter(Boolean);
+
+  // Check if the first part of the stripped URL matches any of the microservices
+  if (strippedUrl.length > 0) {
+    const microservice = strippedUrl[0];
+    if (microservices.includes(microservice)) {
+      return microservice;
     }
   }
-
-  res.on("finish", logOnce);
-  res.on("close", logOnce);
-
-  next();
+  return null; // No matching microservice found
 }
 
 // Log response per microservice
-function logResponse(req, res, start) {
+function logResponse(req, res, start, microserviceName) {
   const responseTime = Date.now() - start;
 
-  // Extract the microservice name from the request
-  const microserviceName = getMicroserviceName(req); // You can define this function to get the microservice name
   const microserviceDir = path.join(metricDir, microserviceName);
   const logFilePath = path.join(microserviceDir, "metrics.json");
   const reportFilePath = path.join(microserviceDir, "report.html");
@@ -67,13 +88,6 @@ function logResponse(req, res, start) {
   uniqueEndpoints.forEach((endpoint) => {
     generateEndpointReport(metrics, endpoint, microserviceName);
   });
-}
-
-// Function to determine the microservice name from the request
-function getMicroserviceName(req) {
-  // Example: Use the first part of the URL as the microservice name
-  const servicePath = req.originalUrl.split("/")[1]; // Assuming /microserviceName/...
-  return servicePath || "default_service"; // If no service path, fallback to default
 }
 
 // Ensure directory exists
@@ -330,51 +344,51 @@ h3{
 
             // Requests Over Time Chart
             let requestsOverTimeChart;
-function updateRequestsOverTimeChart(date) {
-    const filteredMetrics = metrics.filter(function(entry) {
-        return new Date(entry.timestamp).toISOString().split('T')[0] === date;
-    });
-    const hours = Array.from({ length: 24 }, (_, i) => i);
-    const requestCounts = hours.map(function(hour) {
-        return filteredMetrics.filter(function(entry) {
-            return new Date(entry.timestamp).getHours() === hour;
-        }).length;
-    });
+            function updateRequestsOverTimeChart(date) {
+                const filteredMetrics = metrics.filter(function(entry) {
+                    return new Date(entry.timestamp).toISOString().split('T')[0] === date;
+                });
+                const hours = Array.from({ length: 24 }, (_, i) => i);
+                const requestCounts = hours.map(function(hour) {
+                    return filteredMetrics.filter(function(entry) {
+                        return new Date(entry.timestamp).getHours() === hour;
+                    }).length;
+                });
 
-    if (requestsOverTimeChart) {
-        requestsOverTimeChart.destroy();
-    }
+                if (requestsOverTimeChart) {
+                    requestsOverTimeChart.destroy();
+                }
 
-    const requestsOverTimeCtx = document.getElementById('requestsOverTimeChart').getContext('2d');
-    requestsOverTimeChart = new Chart(requestsOverTimeCtx, {
-        type: 'line',
-        data: {
-            labels: hours.map(function(hour) { return hour + ":00"; }),
-            datasets: [{
-                label: 'API Requests',
-                data: requestCounts,
-                borderColor: '#FF6384',
-                fill: false
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true, // Start Y-axis at 0
-                    ticks: {
-                        // Ensure only whole numbers are displayed
-                        callback: function(value) {
-                            if (Number.isInteger(value)) {
-                                return value; // Return whole numbers only
+                const requestsOverTimeCtx = document.getElementById('requestsOverTimeChart').getContext('2d');
+                requestsOverTimeChart = new Chart(requestsOverTimeCtx, {
+                    type: 'line',
+                    data: {
+                        labels: hours.map(function(hour) { return hour + ":00"; }),
+                        datasets: [{
+                            label: 'API Requests',
+                            data: requestCounts,
+                            borderColor: '#FF6384',
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true, // Start Y-axis at 0
+                                ticks: {
+                                    // Ensure only whole numbers are displayed
+                                    callback: function(value) {
+                                        if (Number.isInteger(value)) {
+                                            return value; // Return whole numbers only
+                                        }
+                                        return null; // Skip non-integer values
+                                    }
+                                }
                             }
-                            return null; // Skip non-integer values
                         }
                     }
-                }
+                });
             }
-        }
-    });
-}
 
 
             document.getElementById('datePicker').addEventListener('change', function() {
@@ -551,5 +565,5 @@ function generateEndpointReport(metrics, endpoint, microserviceName) {
   }
 }
 
-
 module.exports = { metricboard };
+
